@@ -1,12 +1,10 @@
 import os
-from fileinput import filename
-from flask import Blueprint, render_template, flash, url_for, request, current_app
+from flask import Blueprint, render_template, flash, url_for, request
 from werkzeug.utils import redirect, secure_filename
-
-
 from main.forms import UploadForm
 
 blueprint = Blueprint('main', __name__)
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 @blueprint.route('/')
@@ -24,15 +22,20 @@ def upload():
 
 @blueprint.route('/process_upload', methods=['POST'])
 def process_upload():
+    """ Добавление файла """
     upload_form = UploadForm()
     if upload_form.validate_on_submit():
         if request.method == 'POST':
             f = upload_form.file.data
             filename = secure_filename(f.filename)
-            f.save(os.path.join(current_app.instance_path, filename[:2], filename
-            ))
+            filename = str(hash(filename))
+            if not os.path.exists(os.path.join(basedir, '..', 'store')):
+                os.mkdir(os.path.join(basedir, '..', 'store'))
+            os.mkdir(os.path.join(basedir, '..', 'store', filename[:2]))
+            f.save(os.path.join(basedir, '..', 'store', filename[:2], filename))
+
         flash('Файл сохранен')
-        flash(f'хэш-ключ:')
+        flash(f'хэш-ключ: {filename}')
         return redirect(url_for('main.upload'))
 
     flash('Файл не выбран.')
