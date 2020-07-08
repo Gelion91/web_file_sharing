@@ -15,7 +15,9 @@
   <body>
     {% include 'menu.html' %}
     <div class="container-fluid" id="back">
-        <h4>{{ page_title }}</h4>
+      <div>
+        <h3>{{ page_title }}</h3>
+      </div>
           {% block content %}{% endblock %}
     </div>
     <!-- Optional JavaScript -->

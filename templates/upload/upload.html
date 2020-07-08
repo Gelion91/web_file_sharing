@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div>
+    <div class="col-4">
         <form action="{{ url_for('main.process_upload')}}" method="POST" enctype=multipart/form-data>
             {{ form.hidden_tag() }}
             <div class="form-group">

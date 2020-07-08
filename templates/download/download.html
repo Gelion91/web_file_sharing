@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="col-4">
+        <form action="{{ url_for('main.process_download')}}" method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.file.label }}
+                {{ form.file() }}
+            </div>
+                {{ form.submit }}
+        </form>
+    </div>
+    <div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <h4>{{page_title}}</h4>
+            <div class="alert alert-warning" role="alert">
+                {% for message in messages %}
+                    {{ message }}<br>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+{% endblock %}

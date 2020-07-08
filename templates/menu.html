@@ -7,13 +7,13 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
      <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="#">download</a>
-        </li>
-         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('main.upload')}}">upload</a>
         </li>
          <li class="nav-item">
-          <a class="nav-link" href="#">delete</a>
+          <a class="nav-link" href="{{ url_for('main.download')}}">download</a>
+        </li>
+         <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('main.delete')}}">delete</a>
         </li>
      </ul>
   </div>
