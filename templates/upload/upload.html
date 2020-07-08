@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div>
+        <form action="{{ url_for('main.process_upload')}}" method="POST" enctype=multipart/form-data>
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.file.label }}
+                {{ form.file() }}
+            </div>
+                {{ form.submit }}
+        </form>
+    </div>
+    <div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <h4>{{page_title}}</h4>
+            <div class="alert alert-warning" role="alert">
+                {% for message in messages %}
+                    {{ message }}<br>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+{% endblock %}
