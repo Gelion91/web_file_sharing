@@ -1,0 +1,11 @@
+body {
+    background-color: #848487c7;
+    width: 100%;
+    height: 100%;
+}
+
+#front {
+    background-color: white;
+    height: 100vh;
+    border-radius: 5px;
+}

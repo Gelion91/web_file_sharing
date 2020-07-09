@@ -14,11 +14,14 @@
 
   <body>
     {% include 'menu.html' %}
-    <div class="container-fluid" id="back">
-      <div>
-        <h3>{{ page_title }}</h3>
-      </div>
-          {% block content %}{% endblock %}
+    <div class="container-fluid">
+        <div class="container" id="front">
+          <p><br></p>
+          <div>
+            <h3>{{ page_title }}</h3>
+          </div>
+              {% block content %}{% endblock %}
+        </div>
     </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

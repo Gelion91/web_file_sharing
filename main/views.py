@@ -1,6 +1,4 @@
 import os
-from glob import glob
-
 from flask import Blueprint, render_template, flash, url_for, request, send_file
 from werkzeug.utils import redirect, secure_filename
 from main.forms import UploadForm, DownloadForm, DeleteForm
@@ -10,21 +8,16 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 @blueprint.route('/')
-def index():
-    title = 'Главная страница'
-    return render_template('start.html', page_title=title)
-
-
 @blueprint.route('/upload')
 def upload():
-    title = 'Добавить'
+    title = 'Добавить файл на сервер'
     upload_form = UploadForm()
     return render_template('upload/upload.html', page_title=title, form=upload_form)
 
 
 @blueprint.route('/process_upload', methods=['POST'])
 def process_upload():
-    """ Добавить файл """
+    """ Добавление файла на сервер """
     upload_form = UploadForm()
     if upload_form.validate_on_submit():
         if request.method == 'POST':
@@ -36,25 +29,23 @@ def process_upload():
             if not os.path.exists(os.path.join(basedir, '..', 'store', filename[:2])):
                 os.mkdir(os.path.join(basedir, '..', 'store', filename[:2]))
             f.save(os.path.join(basedir, '..', 'store', filename[:2], filename))
-
         flash('Файл сохранен')
-        flash(f'хэш-ключ: {filename}')
+        flash(f'хэш: {filename}')
         return redirect(url_for('main.upload'))
-
     flash('Файл не выбран.')
     return redirect(url_for('main.upload'))
 
 
 @blueprint.route('/download')
 def download():
-    title = 'Скачать'
+    title = 'Скачать файл'
     download_form = DownloadForm()
     return render_template('download/download.html', page_title=title, form=download_form)
 
 
 @blueprint.route('/process_download', methods=['GET', 'POST'])
 def process_download():
-    """ Скачать файл """
+    """ Скачать файл с сервера """
     download_form = DownloadForm()
     if download_form.validate_on_submit():
         if request.method == 'POST':
@@ -65,20 +56,20 @@ def process_download():
                 flash('Файл не найден.')
                 return redirect(url_for('main.download'))
 
-    flash('Введите ключ.')
+    flash('Введите хэш.')
     return redirect(url_for('main.download'))
 
 
 @blueprint.route('/delete')
 def delete():
-    title = 'Удалить'
+    title = 'Удалить файл'
     delete_form = DeleteForm()
     return render_template('delete/delete.html', page_title=title, form=delete_form)
 
 
 @blueprint.route('/process_delete', methods=['GET', 'POST'])
 def process_delete():
-    """ Удаление файла """
+    """ Удаление файла с сервера """
     delete_form = DeleteForm()
     if delete_form.validate_on_submit():
         if request.method == 'POST':
@@ -90,6 +81,5 @@ def process_delete():
             except FileNotFoundError:
                 flash('Файл не найден.')
                 return redirect(url_for('main.delete'))
-
-    flash('Введите ключ.')
+    flash('Введите хэш.')
     return redirect(url_for('main.delete'))

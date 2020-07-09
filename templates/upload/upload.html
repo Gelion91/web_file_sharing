@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="col-4">
+    <div class="col">
         <form action="{{ url_for('main.process_upload')}}" method="POST" enctype=multipart/form-data>
             {{ form.hidden_tag() }}
             <div class="form-group">
-                {{ form.file.label }}
+                <p></p>
                 {{ form.file() }}
             </div>
                 {{ form.submit }}
         </form>
     </div>
     <div>
+        <p></p>
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-            <h4>{{page_title}}</h4>
             <div class="alert alert-warning" role="alert">
                 {% for message in messages %}
                     {{ message }}<br>
