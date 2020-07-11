@@ -3,5 +3,10 @@ import hashlib
 
 def get_hash(file):
     res = hashlib.md5()
-    res.update(file.getvalue())
+    while True:
+        data = file.stream.read(128)
+        res.update(data)
+        if not data:
+            break
+        print(res)
     return res.hexdigest()

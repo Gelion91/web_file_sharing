@@ -48,7 +48,7 @@ def download():
 def process_download():
     """ Скачать файл с сервера """
     download_form = DownloadForm()
-    if not download_form.validate_on_submit():
+    if download_form.validate_on_submit():
         if request.method == 'POST':
             result = download_form.file.data
             try:
