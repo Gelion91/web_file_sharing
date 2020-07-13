@@ -1,3 +1,4 @@
+import hashlib
 import os
 from flask import Blueprint, render_template, flash, url_for, request, send_file, current_app
 from werkzeug.utils import redirect
@@ -24,16 +25,17 @@ def process_upload():
         flash('Файл не выбран.')
         return redirect(url_for('main.upload'))
 
-    if not request.method == 'POST':
-        return redirect(url_for('main.upload'))
-
     f = upload_form.file.data
-    file_hash = get_hash(f)
-    if not os.path.exists(os.path.join(current_app.config['PATH'], file_hash[:2])):
-        os.makedirs(os.path.join(current_app.config['PATH'], file_hash[:2]))
-    f.save(os.path.join(current_app.config['PATH'], file_hash[:2], file_hash))
-    flash('Файл сохранен')
-    flash(f'хэш: {file_hash}')
+    file_name = get_hash(f)
+    if not os.path.exists(os.path.join(current_app.config['PATH'], file_name[:2])):
+        os.makedirs(os.path.join(current_app.config['PATH'], file_name[:2]))
+    f.save(os.path.join(current_app.config['PATH'], file_name[:2], file_name))
+    f.seek(0)
+    with open(os.path.join(current_app.config['PATH'], file_name[:2], file_name), 'wb') as result:
+        result.write(f.read())
+        result.close()
+        flash('Файл сохранен')
+        flash(f'хэш: {file_name}')
     return redirect(url_for('main.upload'))
 
 
@@ -48,17 +50,19 @@ def download():
 def process_download():
     """ Скачать файл с сервера """
     download_form = DownloadForm()
-    if download_form.validate_on_submit():
-        if request.method == 'POST':
-            result = download_form.file.data
-            try:
-                return send_file(os.path.join(current_app.config['PATH'], result[:2], result), as_attachment=True)
-            except FileNotFoundError:
-                flash('Файл не найден.')
-                return redirect(url_for('main.download'))
+    if not download_form.validate_on_submit():
+        flash('Введите хэш.')
+        return redirect(url_for('main.download'))
 
-    flash('Введите хэш.')
-    return redirect(url_for('main.download'))
+    if not request.method == 'POST':
+        return redirect(url_for('main.upload'))
+
+    result = download_form.file.data
+    try:
+        return send_file(os.path.join(current_app.config['PATH'], result[:2], result), as_attachment=True)
+    except FileNotFoundError:
+        flash('Файл не найден.')
+        return redirect(url_for('main.download'))
 
 
 @blueprint.route('/delete')
@@ -73,14 +77,17 @@ def process_delete():
     """ Удаление файла с сервера """
     delete_form = DeleteForm()
     if delete_form.validate_on_submit():
-        if request.method == 'POST':
-            result = delete_form.file.data
-            try:
-                os.remove(os.path.join(basedir, '..', 'store', result[:2], result))
-                flash('Файл успешно удален.')
-                return redirect(url_for('main.delete'))
-            except FileNotFoundError:
-                flash('Файл не найден.')
-                return redirect(url_for('main.delete'))
-    flash('Введите хэш.')
-    return redirect(url_for('main.delete'))
+        flash('Введите хэш.')
+        return redirect(url_for('main.delete'))
+
+    if request.method == 'POST':
+        return redirect(url_for('main.delete'))
+
+    result = delete_form.file.data
+    try:
+        os.remove(os.path.join(current_app.config['PATH'], result[:2], result))
+        flash('Файл успешно удален.')
+        return redirect(url_for('main.delete'))
+    except FileNotFoundError:
+        flash('Файл не найден.')
+        return redirect(url_for('main.delete'))
