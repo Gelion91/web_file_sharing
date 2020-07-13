@@ -26,16 +26,16 @@ def process_upload():
         return redirect(url_for('main.upload'))
 
     f = upload_form.file.data
-    file_name = get_hash(f)
-    if not os.path.exists(os.path.join(current_app.config['PATH'], file_name[:2])):
-        os.makedirs(os.path.join(current_app.config['PATH'], file_name[:2]))
-    f.save(os.path.join(current_app.config['PATH'], file_name[:2], file_name))
+    result = get_hash(f)
+    if not os.path.exists(os.path.join(current_app.config['PATH'], result[:2])):
+        os.makedirs(os.path.join(current_app.config['PATH'], result[:2]))
+    f.save(os.path.join(current_app.config['PATH'], result[:2], result))
     f.seek(0)
-    with open(os.path.join(current_app.config['PATH'], file_name[:2], file_name), 'wb') as result:
-        result.write(f.read())
-        result.close()
+    with open(os.path.join(current_app.config['PATH'], result[:2], result), 'wb') as fl:
+        fl.write(f.read())
+        fl.close()
         flash('Файл сохранен')
-        flash(f'хэш: {file_name}')
+        flash(f'хэш: {result}')
     return redirect(url_for('main.upload'))
 
 
@@ -86,6 +86,8 @@ def process_delete():
     result = delete_form.file.data
     try:
         os.remove(os.path.join(current_app.config['PATH'], result[:2], result))
+        if not os.listdir(os.path.join(current_app.config['PATH'], result[:2])):
+            os.rmdir(os.path.join(current_app.config['PATH'], result[:2]))
         flash('Файл успешно удален.')
         return redirect(url_for('main.delete'))
     except FileNotFoundError:
