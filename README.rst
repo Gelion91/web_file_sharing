@@ -21,7 +21,12 @@ web_file_sharing
 
 .. code-block:: python
 
+    #CSRF
+    import os
     SECRET_KEY = 'Введите сложный набор символов который будет служить ключем защищающим от атак CSRF.'
+
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    PATH = os.path.join(basedir, 'имя директории в которой будут храниться файлы')
 
 Запуск
 ----
