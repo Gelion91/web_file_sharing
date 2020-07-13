@@ -76,11 +76,11 @@ def delete():
 def process_delete():
     """ Удаление файла с сервера """
     delete_form = DeleteForm()
-    if delete_form.validate_on_submit():
+    if not delete_form.validate_on_submit():
         flash('Введите хэш.')
         return redirect(url_for('main.delete'))
 
-    if request.method == 'POST':
+    if not request.method == 'POST':
         return redirect(url_for('main.delete'))
 
     result = delete_form.file.data
